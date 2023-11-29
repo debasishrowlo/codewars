@@ -1,0 +1,83 @@
+function trafficLights(road, n) {
+  const result = [road]
+
+  const state = {
+    carPosition: null,
+    trafficLights: [],
+  }
+
+  for (let i = 0; i < road.length; i++) {
+    const char = road[i]
+
+    if (char === "C") {
+      state.carPosition = i
+    }
+    
+    if (char === "R") {
+      state.trafficLights.push({
+        color: "R",
+        position: i,
+        waitTime: 1,
+      })
+    }
+
+    if (char === "G") {
+      state.trafficLights.push({
+        color: "G",
+        position: i,
+        waitTime: 1,
+      })
+    }
+  }
+
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < state.trafficLights.length; j++) {
+      const trafficLight = state.trafficLights[j]
+
+      if (trafficLight.color === "R") {
+        if (trafficLight.waitTime < 5) {
+          trafficLight.waitTime++
+        } else {
+          trafficLight.color = "G"
+          trafficLight.waitTime = 1
+        }
+      } 
+      else if (trafficLight.color === "G") {
+        if (trafficLight.waitTime < 5) {
+          trafficLight.waitTime++
+        } else {
+          trafficLight.color = "O"
+          trafficLight.waitTime = 1
+        }
+      } 
+      else if (trafficLight.color === "O") {
+        trafficLight.color = "R"
+        trafficLight.waitTime = 1
+      }
+    }
+
+    const roadBlocked = state.trafficLights.find(light => {
+      return light.position === state.carPosition + 1 && light.color !== "G"
+    })
+    if (!roadBlocked) {
+      state.carPosition++
+    }
+
+    let newRoad = Array(road.length).fill(".")
+
+    for (let j = 0; j < state.trafficLights.length; j++) {
+      const trafficLight = state.trafficLights[j]
+      newRoad[trafficLight.position] = trafficLight.color
+    }
+
+    if (state.carPosition < road.length) {
+      newRoad[state.carPosition] = "C"
+    }
+
+    newRoad = newRoad.join("")
+
+    result.push(newRoad)
+  }
+
+  return result
+}
